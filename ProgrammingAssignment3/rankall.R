@@ -58,7 +58,6 @@ rankall <- function(outcome, num = "best") {
         
         required.hospital <- ordered.state.hospitals[ordered.state.hospitals[['Rank']] == target.num, ]
         ranked.all <- rbind(ranked.all, required.hospital[c('Hospital.Name', 'State')])
-        ranked.all[["row.names"]] <- ranked.all[["State"]]
     }
     
     ranked.all
