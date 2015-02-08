@@ -13,25 +13,21 @@ rankall <- function(outcome, num = "best") {
     if (!outcome %in% valid.outcomes) {
         stop("invalid outcome")
     }
-    
-    #initialze output dataframe.
-    ranked.all <- data.frame(Name = character(0), State = character(0))
-    
+       
     #What column do we want to read?
     target.column.names = list("heart attack" = "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Attack",
                                "heart failure" = "Hospital.30.Day.Death..Mortality..Rates.from.Heart.Failure",
                                "pneumonia" = "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia")
     target.column <- target.column.names[[outcome]]
     
-    
         
     ## For each state, find the hospital of the given rank
     
-    list.of.states <- unique(outcomes[['State']])  # Get list of states
-    
+    list.of.states <- sort(unique(outcomes[['State']]))  # Get list of states (sorted)
+    list.of.hospitals <- vector()  # A vector to store our hospital names
     
     for (st in list.of.states) {  # cycle through our list of states and find the ranks
-
+        
         state.hospitals <- outcomes[outcomes[['State']] == st, ]  # get list of hospitals for the argument state
         
         # convert 30 day death rate column to numeric & order by that rate. Also, remove NA.
@@ -50,24 +46,28 @@ rankall <- function(outcome, num = "best") {
         } else if (num == "worst") {
             target.num = number.of.ranked
         } else if (suppressWarnings(as.numeric(num)) > number.of.ranked) {  # num > number of ranked
-            ranked.all <- rbind(ranked.all, c(NA, st))
+            list.of.hospitals <- append(list.of.hospitals, NA)
             next
         } else {
             target.num <- suppressWarnings(as.numeric(num))
         }
         
         required.hospital <- ordered.state.hospitals[ordered.state.hospitals[['Rank']] == target.num, ]
-        ranked.all <- rbind(ranked.all, required.hospital[c('Hospital.Name', 'State')])
+        list.of.hospitals <- append(list.of.hospitals, required.hospital[['Hospital.Name']])  # Add name to hospital names vector
+        
     }
-    
-    ranked.all
-    
-    
-    
-    
     
     ## Return a data frame with the hospital names and the
     ## (abbreviated) state name
+    ranked.all <- data.frame(list.of.hospitals, list.of.states, row.names = list.of.states)
+    names(ranked.all) = c("hospital", "state")
+    return(ranked.all)
+    
+    
+    
+    
+    
+
 }
 
 
