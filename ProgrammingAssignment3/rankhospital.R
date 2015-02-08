@@ -27,13 +27,13 @@ rankhospital <- function(state, outcome, num = "best") {
     state.hospitals[['death.rate.num']] <- suppressWarnings(as.numeric(state.hospitals[[target.column]]))
     ordered.state.hospitals <- state.hospitals[order(state.hospitals[['death.rate.num']],state.hospitals[['Hospital.Name']], na.last=NA ), ]
     
-    # add a rank column
-    rank.vector <- c(1:nrow(ordered.state.hospitals))
-    ordered.state.hospitals[['Rank']] <- rank.vector
-    
-    # Check for best, worst and invalid rank
     number.of.ranked <- nrow(ordered.state.hospitals)
     
+    # add a rank column
+    rank.vector <- c(1:number.of.ranked)
+    ordered.state.hospitals[['Rank']] <- rank.vector
+    
+    # Check for best, worst and invalid rank    
     if (num == "best") {
         num = 1L
     } else if (num == "worst") {
